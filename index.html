@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>嘴替大王</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <div class="logo" aria-hidden="true">💋</div>
+        <div>
+          <h1>嘴替大王</h1>
+          <p>家族群辟谣，我替你开口</p>
+        </div>
+      </header>
+
+      <section class="composer" aria-labelledby="input-title">
+        <div class="field-head">
+          <h2 id="input-title">先说说情况</h2>
+          <button class="ghost-button" id="examplesToggle" type="button">看看例子</button>
+        </div>
+
+        <div class="examples" id="examplesPanel" hidden>
+          <button type="button">我妈转了个视频说隔夜菜吃了会致癌</button>
+          <button type="button">我爸说每天拍打经络能治高血压</button>
+          <button type="button">家族群里转了个视频说WiFi辐射影响健康</button>
+          <button type="button">我妈说用微波炉加热食物有毒</button>
+          <button type="button">群里有人转发说输液可以通血管预防中风</button>
+          <button type="button">我爸转了养生视频说晚上吃姜等于吃砒霜</button>
+        </div>
+
+        <textarea
+          id="claimInput"
+          rows="5"
+          maxlength="260"
+          placeholder="你家人又转了啥？比如：我妈说隔夜菜吃了会致癌"
+        ></textarea>
+
+        <fieldset class="tone-picker">
+          <legend>想怎么回</legend>
+          <label>
+            <input type="radio" name="tone" value="gentle" checked />
+            <span>
+              <strong>温柔哄着说</strong>
+              <small>不伤感情，哄着来</small>
+            </span>
+          </label>
+          <label>
+            <input type="radio" name="tone" value="funny" />
+            <span>
+              <strong>幽默化解</strong>
+              <small>用段子把事说明白</small>
+            </span>
+          </label>
+          <label>
+            <input type="radio" name="tone" value="science" />
+            <span>
+              <strong>科学严谨</strong>
+              <small>摆数据讲道理</small>
+            </span>
+          </label>
+        </fieldset>
+
+        <button class="primary-button" id="submitBtn" type="button" disabled>帮我怼回去</button>
+        <p class="error" id="errorText" role="alert" hidden></p>
+      </section>
+
+      <section class="result" id="result" aria-live="polite" hidden>
+        <div class="verdict-row">
+          <span class="verdict-label" id="verdictLabel">鉴定结果</span>
+        </div>
+
+        <div class="result-block">
+          <h2>问题在哪</h2>
+          <p id="analysisText"></p>
+        </div>
+
+        <div class="result-block">
+          <h2>群里这么回</h2>
+          <div class="wechat-bubble" id="replyText"></div>
+          <button class="copy-button" id="copyBtn" type="button">复制话术</button>
+        </div>
+
+        <div class="result-block image-section" id="imageSection">
+          <h2>生成辟谣图片</h2>
+          <div class="image-style-row">
+            <button class="style-btn is-active" id="styleOfficialBtn" data-style="official" type="button">🏛 正经辟谣风</button>
+            <button class="style-btn" id="styleMarketingBtn" data-style="marketing" type="button">📢 营销号风格</button>
+          </div>
+          <button class="generate-image-btn" id="generateImageBtn" type="button">生成图片</button>
+          <p class="image-error" id="imageError" role="alert" hidden></p>
+          <div class="image-result" id="imageResult" hidden>
+            <img id="generatedImage" src="" alt="生成的辟谣图片" />
+            <a class="save-btn" id="saveImageBtn" download="辟谣图片.png">保存图片</a>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button class="secondary-button" id="regenerateBtn" type="button">换个说法</button>
+          <button class="secondary-button quiet-button" id="resetBtn" type="button">清空再写一条</button>
+        </div>
+      </section>
+
+      <footer>AI生成内容仅供参考，健康问题请咨询专业医生</footer>
+    </main>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>

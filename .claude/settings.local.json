@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /tmp/nginx-cert)",
+      "Bash(unzip -o \"/Users/yang2krown/Library/Containers/com.tencent.WeWorkMac/Data/Documents/Profiles/BD6CA88991982BA99C58C312CCE4074B/Caches/Files/2026-05/da552a34246a4462bfe1e8f4f14af4e2/25051235_zuiti-dawang.midonghub.com_nginx.zip\" -d /tmp/nginx-cert)",
+      "Bash(ssh *)",
+      "Bash(expect *)"
+    ]
+  }
+}

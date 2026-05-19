@@ -4,6 +4,7 @@ const path = require("node:path");
 const handler = require("./api/generate.js");
 const imageHandler = require("./api/generate-image.js");
 const imageStatusHandler = require("./api/image-status.js");
+const imageFileHandler = require("./api/image-file.js");
 
 const root = __dirname;
 const port = Number(process.env.PORT || 4173);
@@ -71,6 +72,10 @@ const server = http.createServer(async (req, res) => {
 
   if (url.pathname === "/api/image-status") {
     return imageStatusHandler(req, res);
+  }
+
+  if (url.pathname === "/api/image-file") {
+    return imageFileHandler(req, res);
   }
 
   if (url.pathname === "/api/generate" || url.pathname === "/api/generate-image") {

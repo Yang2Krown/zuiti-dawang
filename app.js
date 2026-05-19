@@ -18,6 +18,42 @@ const imageResult = document.querySelector("#imageResult");
 const generatedImage = document.querySelector("#generatedImage");
 const saveImageBtn = document.querySelector("#saveImageBtn");
 let isGenerating = false;
+
+function saveImageInMiniProgram(imageUrl) {
+  function doNavigate() {
+    wx.miniProgram.navigateTo({
+      url: `/pages/save-image/index?url=${encodeURIComponent(imageUrl)}`,
+      fail: (err) => alert("跳转失败: " + JSON.stringify(err)),
+    });
+  }
+
+  if (typeof wx !== "undefined" && wx.miniProgram) {
+    doNavigate();
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.src = "https://res.wx.qq.com/open/js/jweixin-1.6.0.js";
+  script.onload = doNavigate;
+  script.onerror = () => alert("JSSDK 加载失败，请检查网络");
+  document.head.appendChild(script);
+}
+
+// 在小程序环境中，拦截保存按钮，跳转到小程序保存页
+saveImageBtn.addEventListener("click", function (e) {
+  // 在点击时检测，避免脚本加载时序问题
+  const inMP =
+    /miniProgram/i.test(navigator.userAgent) ||
+    window.__wxjs_environment === "miniprogram";
+
+  // 可见调试：先改按钮文字确认点击触发了
+  saveImageBtn.textContent = inMP ? "跳转中..." : "保存图片";
+
+  if (!inMP) return; // 普通浏览器走原生 <a download>
+  e.preventDefault();
+  const fullUrl = new URL(saveImageBtn.href, window.location.href).href;
+  saveImageInMiniProgram(fullUrl);
+});
 let isGeneratingImage = false;
 let lastParsed = null;
 

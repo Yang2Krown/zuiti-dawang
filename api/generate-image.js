@@ -115,7 +115,18 @@ async function runImageJob(jobId, prompt, apiKey) {
       }
 
       console.log("[generate-image] image URL prefix:", imageUrl.slice(0, 60));
-      jobs.set(jobId, { ...jobs.get(jobId), status: "done", imageUrl });
+
+      // base64 data URI → 转为可访问的 HTTP 接口，避免把大体积 base64 直接暴露给客户端
+      if (imageUrl.startsWith("data:image")) {
+        jobs.set(jobId, {
+          ...jobs.get(jobId),
+          status: "done",
+          imageData: imageUrl,
+          imageUrl: `/api/image-file?id=${jobId}`,
+        });
+      } else {
+        jobs.set(jobId, { ...jobs.get(jobId), status: "done", imageUrl });
+      }
       console.log("=== [generate-image] job:", jobId, "done ===\n");
       return;
     } catch (error) {

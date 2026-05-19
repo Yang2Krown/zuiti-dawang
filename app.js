@@ -19,40 +19,48 @@ const generatedImage = document.querySelector("#generatedImage");
 const saveImageBtn = document.querySelector("#saveImageBtn");
 let isGenerating = false;
 
-function saveImageInMiniProgram(imageUrl) {
-  function doNavigate() {
-    wx.miniProgram.navigateTo({
-      url: `/pages/save-image/index?url=${encodeURIComponent(imageUrl)}`,
-      fail: (err) => alert("跳转失败: " + JSON.stringify(err)),
-    });
-  }
+const inMP =
+  /miniProgram/i.test(navigator.userAgent) ||
+  window.__wxjs_environment === "miniprogram";
 
+// 提前加载 JSSDK，减少点击时的等待
+let jssdkReady = null;
+function ensureJSSDK() {
+  if (jssdkReady) return jssdkReady;
   if (typeof wx !== "undefined" && wx.miniProgram) {
-    doNavigate();
-    return;
+    jssdkReady = Promise.resolve();
+    return jssdkReady;
   }
+  jssdkReady = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://res.wx.qq.com/open/js/jweixin-1.6.0.js";
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+  return jssdkReady;
+}
+if (inMP) ensureJSSDK(); // 页面加载时就开始预加载
 
-  const script = document.createElement("script");
-  script.src = "https://res.wx.qq.com/open/js/jweixin-1.6.0.js";
-  script.onload = doNavigate;
-  script.onerror = () => alert("JSSDK 加载失败，请检查网络");
-  document.head.appendChild(script);
+function navigateMP(url) {
+  ensureJSSDK().then(() => {
+    wx.miniProgram.navigateTo({ url });
+  }).catch(() => alert("JSSDK 加载失败，请检查网络"));
 }
 
-// 在小程序环境中，拦截保存按钮，跳转到小程序保存页
+// 保存按钮：跳转到小程序保存页
 saveImageBtn.addEventListener("click", function (e) {
-  // 在点击时检测，避免脚本加载时序问题
-  const inMP =
-    /miniProgram/i.test(navigator.userAgent) ||
-    window.__wxjs_environment === "miniprogram";
-
-  // 可见调试：先改按钮文字确认点击触发了
-  saveImageBtn.textContent = inMP ? "跳转中..." : "保存图片";
-
-  if (!inMP) return; // 普通浏览器走原生 <a download>
+  if (!inMP) return;
   e.preventDefault();
   const fullUrl = new URL(saveImageBtn.href, window.location.href).href;
-  saveImageInMiniProgram(fullUrl);
+  navigateMP(`/pages/save-image/index?url=${encodeURIComponent(fullUrl)}`);
+});
+
+// 图片点击：跳转到小程序预览页（支持全屏查看 + 保存）
+generatedImage.addEventListener("click", function () {
+  if (!inMP) return;
+  const fullUrl = new URL(saveImageBtn.href, window.location.href).href;
+  navigateMP(`/pages/save-image/index?url=${encodeURIComponent(fullUrl)}&mode=preview`);
 });
 let isGeneratingImage = false;
 let lastParsed = null;
